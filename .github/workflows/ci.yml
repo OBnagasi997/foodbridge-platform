@@ -127,7 +127,7 @@ jobs:
       # Seule action tierce du pipeline. Épinglée par SHA de commit complet (v0.35.0, version
       # publiée en "release immuable"), jamais par tag : voir docs/ci-cd.md, incident du 19 mars 2026.
       - name: Scan de vulnérabilités (Trivy, échec sur CRITICAL)
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         env:
           # Miroir de secours si le registre GHCR limite le téléchargement de la base (TOOMANYREQUESTS)
           TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db:2,ghcr.io/aquasecurity/trivy-db:2
