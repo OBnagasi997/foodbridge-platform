@@ -1,0 +1,86 @@
+@import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource-variable/figtree";
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Verts : de la feuille au sous-bois */
+  --color-leaf-50: #f1f6ea;
+  --color-leaf-100: #e1edd2;
+  --color-leaf-200: #c6dcae;
+  --color-leaf-300: #a3c47f;
+  --color-leaf-500: #5b8a4e;
+  --color-leaf-600: #3f7058;
+  --color-leaf-700: #2f5d46;
+  --color-leaf-800: #234736;
+  --color-leaf-900: #1a3629;
+
+  /* Neutres chauds */
+  --color-oat-50: #fbf9f4;
+  --color-oat-100: #f5f1e8;
+  --color-oat-200: #e9e3d4;
+  --color-oat-300: #d6cdb8;
+  --color-oat-500: #8d8470;
+  --color-oat-700: #5a5344;
+
+  /* Réservé aux signaux d'urgence (temps restant) */
+  --color-honey-100: #fbecc8;
+  --color-honey-500: #d9972b;
+  --color-honey-700: #8a5a0f;
+
+  --color-danger-100: #f9dcd6;
+  --color-danger-700: #9b2c1d;
+
+  --shadow-card: 0 1px 2px rgb(26 54 41 / 0.06), 0 8px 24px -12px rgb(26 54 41 / 0.18);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-oat-50);
+    color: var(--color-leaf-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  :focus-visible {
+    outline: 2px solid var(--color-leaf-600);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  ::selection { background: var(--color-leaf-200); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-oat-200);
+  border-radius: 0.5rem;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
+  animation: shimmer 1.4s infinite;
+}

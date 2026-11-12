@@ -1,0 +1,22 @@
+# Secrets et état
+.env
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars.secret
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+
+# Éditeurs / OS
+.idea/
+.vscode/
+.DS_Store

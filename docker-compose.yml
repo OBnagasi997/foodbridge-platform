@@ -1,0 +1,58 @@
+# Environnement de développement complet : docker compose up --build
+# Les valeurs par défaut permettent un démarrage sans .env ; copie .env.example pour personnaliser.
+name: foodbridge
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-foodbridge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-foodbridge}
+      POSTGRES_DB: ${POSTGRES_DB:-foodbridge}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Tâche ponctuelle : applique les migrations puis s'arrête (équivaut à un Job / initContainer en K8s).
+  migrate:
+    build: ./backend
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-foodbridge}:${POSTGRES_PASSWORD:-foodbridge}@db:5432/${POSTGRES_DB:-foodbridge}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    build: ./backend
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      SECRET_KEY: ${SECRET_KEY:-dev-only-change-me-dev-only-change-me}
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-foodbridge}:${POSTGRES_PASSWORD:-foodbridge}@db:5432/${POSTGRES_DB:-foodbridge}
+      DEFAULT_PHONE_REGION: ${DEFAULT_PHONE_REGION:-FR}
+      CORS_ORIGINS: '["http://localhost:8080","http://localhost:5173"]'
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    environment:
+      BACKEND_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
